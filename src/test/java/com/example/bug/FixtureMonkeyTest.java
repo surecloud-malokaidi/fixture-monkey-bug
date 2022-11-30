@@ -2,6 +2,8 @@ package com.example.bug;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
@@ -16,6 +18,8 @@ class FixtureMonkeyTest
                                            .defaultArbitraryContainerInfo( new ArbitraryContainerInfo( 1, 3, false ) )
                                            .nullableContainer( false )
                                            .nullableElement( false )
+                                           .interfaceImplements( IAuthor.class, List.of( IJohn.class ) )
+                                           .interfaceImplements( AbstractAuthor.class, List.of( John.class ) )
                                            .build();
 
     @Test
