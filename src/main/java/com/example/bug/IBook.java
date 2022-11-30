@@ -2,18 +2,18 @@ package com.example.bug;
 
 import java.util.List;
 
-public class Book
+public class IBook
 {
     String author;
 
-    List<AbstractAuthor> authors;
+    List<IAuthor> authors;
 
-    public List<AbstractAuthor> getAuthors()
+    public List<IAuthor> getAuthors()
     {
         return authors;
     }
 
-    public void setAuthors( List<AbstractAuthor> authors )
+    public void setAuthors( List<IAuthor> authors )
     {
         this.authors = authors;
     }
