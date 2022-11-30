@@ -11,12 +11,16 @@ import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntr
 
 class FixtureMonkeyTest
 {
+    FixtureMonkey fixtureMonkey = LabMonkey.labMonkeyBuilder()
+                                           .objectIntrospector( FieldReflectionArbitraryIntrospector.INSTANCE )
+                                           .defaultArbitraryContainerInfo( new ArbitraryContainerInfo( 1, 3, false ) )
+                                           .nullableContainer( false )
+                                           .nullableElement( false )
+                                           .build();
+
     @Test
     void abstractClass()
     {
-        FixtureMonkey fixtureMonkey =
-            LabMonkey.labMonkeyBuilder().objectIntrospector( FieldReflectionArbitraryIntrospector.INSTANCE ).defaultArbitraryContainerInfo( new ArbitraryContainerInfo( 3, 5, false ) ).build();
-
         Book book = fixtureMonkey.giveMeOne( Book.class );
 
         assertThat( book.getAuthors() ).isNotEmpty().doesNotContainNull();
@@ -25,9 +29,6 @@ class FixtureMonkeyTest
     @Test
     void interfaceTest()
     {
-        FixtureMonkey fixtureMonkey =
-            LabMonkey.labMonkeyBuilder().objectIntrospector( FieldReflectionArbitraryIntrospector.INSTANCE ).defaultArbitraryContainerInfo( new ArbitraryContainerInfo( 3, 5, false ) ).build();
-
         IBook book = fixtureMonkey.giveMeOne( IBook.class );
 
         assertThat( book.getAuthors() ).isNotEmpty().doesNotContainNull();

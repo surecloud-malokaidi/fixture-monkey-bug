@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
 
-class StackOverflow
+class StackOverflowTest
 {
     record Author( String name, List<Book> books ) {}
 
