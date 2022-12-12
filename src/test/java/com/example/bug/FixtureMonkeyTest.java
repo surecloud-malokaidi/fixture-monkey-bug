@@ -9,31 +9,26 @@ import org.junit.jupiter.api.Test;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.LabMonkey;
 import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
+import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
 
 class FixtureMonkeyTest
 {
     FixtureMonkey fixtureMonkey = LabMonkey.labMonkeyBuilder()
                                            .objectIntrospector( FieldReflectionArbitraryIntrospector.INSTANCE )
-                                           .defaultArbitraryContainerInfo( new ArbitraryContainerInfo( 1, 3, false ) )
+                                           .defaultArbitraryContainerInfo( new ArbitraryContainerInfo( 1, 1, false ) )
                                            .nullableContainer( false )
                                            .nullableElement( false )
-                                           .interfaceImplements( IAuthor.class, List.of( IJohn.class ) )
-                                           .interfaceImplements( AbstractAuthor.class, List.of( John.class ) )
+                                           .pushAssignableTypeArbitraryIntrospector( AbstractAuthor.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE )
+                                           .interfaceImplements( AbstractAuthor.class, List.of( John.class, Peter.class ) )
                                            .build();
 
     @Test
-    void abstractClass()
+    void abstractTest()
     {
-        Book book = fixtureMonkey.giveMeOne( Book.class );
-
-        assertThat( book.getAuthors() ).isNotEmpty().doesNotContainNull();
-    }
-
-    @Test
-    void interfaceTest()
-    {
-        IBook book = fixtureMonkey.giveMeOne( IBook.class );
+        Book book = fixtureMonkey.giveMeBuilder( Book.class )
+                                 .set( "authors", fixtureMonkey.giveMe( John.class, 2 ) )
+                                 .sample();
 
         assertThat( book.getAuthors() ).isNotEmpty().doesNotContainNull();
     }

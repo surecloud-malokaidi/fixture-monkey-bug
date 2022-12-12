@@ -1,5 +1,13 @@
 package com.example.bug;
 
-public class John extends AbstractAuthor
+import java.beans.ConstructorProperties;
+
+public class John
+    extends AbstractAuthor
 {
+    @ConstructorProperties( "name" )
+    public John( String name )
+    {
+        super( name );
+    }
 }
