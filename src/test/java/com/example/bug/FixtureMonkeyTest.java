@@ -26,8 +26,10 @@ class FixtureMonkeyTest
     @Test
     void abstractTest()
     {
+        Mark mark = fixtureMonkey.giveMeOne( Mark.class );
+
         Book book = fixtureMonkey.giveMeBuilder( Book.class )
-                                 .set( "authors", fixtureMonkey.giveMe( John.class, 2 ) )
+                                 .set( "authors", List.of( mark ) )
                                  .sample();
 
         assertThat( book.getAuthors() ).isNotEmpty().doesNotContainNull();
