@@ -1,5 +1,7 @@
 package com.example.bug;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,5 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public abstract class AbstractAuthor
 {
-    private String name;
+    protected String name;
+
+    protected List<AbstractAuthor> authors;
 }

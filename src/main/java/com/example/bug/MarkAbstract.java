@@ -1,13 +1,14 @@
 package com.example.bug;
 
 import java.beans.ConstructorProperties;
+import java.util.List;
 
 public abstract class MarkAbstract
     extends AbstractAuthor
 {
-    @ConstructorProperties( "name" )
-    public MarkAbstract( String name )
+    @ConstructorProperties( { "name", "authors" } )
+    protected MarkAbstract( String name, List<AbstractAuthor> authors  )
     {
-        super( name );
+        super( name, authors );
     }
 }

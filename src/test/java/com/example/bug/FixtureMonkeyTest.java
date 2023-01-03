@@ -20,7 +20,7 @@ class FixtureMonkeyTest
                                            .nullableContainer( false )
                                            .nullableElement( false )
                                            .pushAssignableTypeArbitraryIntrospector( AbstractAuthor.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE )
-                                           .interfaceImplements( AbstractAuthor.class, List.of( John.class, Peter.class ) )
+                                           .interfaceImplements( AbstractAuthor.class, List.of( John.class, Peter.class, Mark.class ) )
                                            .build();
 
     @Test
