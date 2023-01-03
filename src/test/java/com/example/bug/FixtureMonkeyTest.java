@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.LabMonkey;
 import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
-import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
 
 class FixtureMonkeyTest
@@ -19,19 +18,18 @@ class FixtureMonkeyTest
                                            .defaultArbitraryContainerInfo( new ArbitraryContainerInfo( 1, 1, false ) )
                                            .nullableContainer( false )
                                            .nullableElement( false )
-                                           .pushAssignableTypeArbitraryIntrospector( AbstractAuthor.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE )
-                                           .interfaceImplements( AbstractAuthor.class, List.of( John.class, Peter.class, Mark.class ) )
+                                           .interfaceImplements( Condition.class, List.of( BasicCondition.class, ValueCondition.class ) )
                                            .build();
 
     @Test
-    void abstractTest()
+    void bugTest()
     {
-        Mark mark = fixtureMonkey.giveMeOne( Mark.class );
+        ValueCondition condition = fixtureMonkey.giveMeOne( ValueCondition.class );
 
-        Book book = fixtureMonkey.giveMeBuilder( Book.class )
-                                 .set( "authors", List.of( mark ) )
-                                 .sample();
+        Workflow workflow = fixtureMonkey.giveMeBuilder( Workflow.class )
+                                         .set( "states[0].triggers[0].conditions", List.of( condition ) )
+                                         .sample();
 
-        assertThat( book.getAuthors() ).isNotEmpty().doesNotContainNull();
+        assertThat( workflow ).isNotNull();
     }
 }
