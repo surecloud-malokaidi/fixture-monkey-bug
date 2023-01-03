@@ -37,7 +37,7 @@ class FixtureMonkeyTest
     @Test
     void invalidIntrospector()
     {
-        FixtureMonkey fixtureMonkey = LabMonkey.labMonkeyBuilder()
+        FixtureMonkey newFixtureMonkey = LabMonkey.labMonkeyBuilder()
                                                .objectIntrospector( FieldReflectionArbitraryIntrospector.INSTANCE )
                                                .defaultArbitraryContainerInfo( new ArbitraryContainerInfo( 1, 1, false ) )
                                                .nullableContainer( false )
@@ -46,7 +46,7 @@ class FixtureMonkeyTest
                                                .interfaceImplements( Condition.class, List.of( BasicCondition.class, ValueCondition.class ) )
                                                .build();
 
-        Workflow workflow = fixtureMonkey.giveMeOne( Workflow.class );
+        Workflow workflow = newFixtureMonkey.giveMeOne( Workflow.class );
 
         assertThat( workflow ).isNotNull();
     }
