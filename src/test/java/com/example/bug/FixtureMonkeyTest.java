@@ -1,15 +1,17 @@
 package com.example.bug;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.LabMonkey;
 import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
-import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
 
 class FixtureMonkeyTest
@@ -19,19 +21,31 @@ class FixtureMonkeyTest
                                            .defaultArbitraryContainerInfo( new ArbitraryContainerInfo( 1, 1, false ) )
                                            .nullableContainer( false )
                                            .nullableElement( false )
-                                           .pushAssignableTypeArbitraryIntrospector( AbstractAuthor.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE )
-                                           .interfaceImplements( AbstractAuthor.class, List.of( John.class, Peter.class, Mark.class ) )
+                                           .interfaceImplements( Condition.class, List.of( BasicCondition.class, ValueCondition.class ) )
                                            .build();
 
     @Test
-    void abstractTest()
+    void mockTest()
     {
-        Mark mark = fixtureMonkey.giveMeOne( Mark.class );
+        UUID id = UUID.randomUUID();
+        ValueCondition condition = mock( ValueCondition.class );
 
-        Book book = fixtureMonkey.giveMeBuilder( Book.class )
-                                 .set( "authors", List.of( mark ) )
-                                 .sample();
+        given( condition.getId() ).willReturn( id );
 
-        assertThat( book.getAuthors() ).isNotEmpty().doesNotContainNull();
+        assertThat( condition.getId() ).isEqualTo( id );
+
+        Workflow workflow = fixtureMonkey.giveMeBuilder( Workflow.class )
+                                         .set( "states[0].triggers[0].conditions", List.of( condition ) )
+                                         .sample();
+
+        assertThat( workflow.getStates().get( 0 ).getTriggers().get( 0 ).getConditions().get( 0 ).getId() ).isEqualTo( id );
+    }
+
+    @Test
+    void entityTest()
+    {
+        Entity entity = fixtureMonkey.giveMeOne( Entity.class );
+
+        assertThat( entity ).isNotNull();
     }
 }
