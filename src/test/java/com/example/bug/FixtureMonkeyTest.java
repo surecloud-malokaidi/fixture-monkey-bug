@@ -21,9 +21,24 @@ class FixtureMonkeyTest {
             .build();
 
     @Test
-    void testMe() {
-        Book book = fixtureMonkey.giveMeOne(Book.class);
+    void bugOne() {
+        CustomJooqRecord customJooqRecord = fixtureMonkey.giveMeOne(CustomJooqRecord.class);
 
-        assertThat(book).isNotNull();
+        assertThat(customJooqRecord).isNotNull();
+    }
+
+    @Test
+    void bugTwo() {
+        BasicCondition basicCondition = fixtureMonkey.giveMeOne(BasicCondition.class);
+
+        assertThat(basicCondition).isNotNull();
+    }
+
+    @Test
+    void bugThree() {
+        // Trying to replicate the replicate
+        StuffWithNodes node = fixtureMonkey.giveMeOne(StuffWithNodes.class);
+
+        assertThat(node).isNotNull();
     }
 }

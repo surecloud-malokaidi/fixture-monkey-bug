@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class BasicCondition
     extends Condition
 {
+    public Class<?> anyClass;
 }
