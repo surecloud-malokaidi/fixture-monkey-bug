@@ -36,7 +36,7 @@ class FixtureMonkeyTest {
 
     @Test
     void bugThree() {
-        // Trying to replicate the replicate
+        // I'm still trying to replicate the issue
         StuffWithNodes node = fixtureMonkey.giveMeOne(StuffWithNodes.class);
 
         assertThat(node).isNotNull();
