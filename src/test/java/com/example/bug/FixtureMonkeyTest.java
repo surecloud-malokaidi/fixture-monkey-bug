@@ -5,6 +5,7 @@ import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
 import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.codec.multipart.FilePart;
 
 import java.util.List;
 
@@ -36,9 +37,8 @@ class FixtureMonkeyTest {
 
     @Test
     void bugThree() {
-        // I'm still trying to replicate the issue
-        StuffWithNodes node = fixtureMonkey.giveMeOne(StuffWithNodes.class);
+        FilePart filePart = fixtureMonkey.giveMeOne(FilePart.class);
 
-        assertThat(node).isNotNull();
+        assertThat(filePart).isNotNull();
     }
 }
