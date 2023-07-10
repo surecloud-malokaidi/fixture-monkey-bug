@@ -4,41 +4,62 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
 import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.codec.multipart.FilePart;
+import com.navercorp.fixturemonkey.api.introspector.JavaTypeArbitraryGenerator;
+import net.jqwik.api.arbitraries.StringArbitrary;
+import org.junit.jupiter.api.RepeatedTest;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FixtureMonkeyTest {
+
+    static class CustomJavaTypeArbitaryGenerator implements JavaTypeArbitraryGenerator {
+        @Override
+        public StringArbitrary strings() {
+            return JavaTypeArbitraryGenerator.super.strings()
+                    .alpha()
+                    .ofMinLength(5)
+                    .ofMaxLength(25)
+                    .repeatChars(0);
+        }
+    }
+
     FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
             .objectIntrospector(FieldReflectionArbitraryIntrospector.INSTANCE)
             .defaultArbitraryContainerInfoGenerator(context -> new ArbitraryContainerInfo(1, 1))
             .nullableContainer(false)
+            .defaultNotNull(true)
             .nullableElement(false)
             .interfaceImplements(Book.class, List.of(FantasyBook.class))
             .pushAssignableTypeArbitraryIntrospector(Record.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
+            .javaTypeArbitraryGenerator(new CustomJavaTypeArbitaryGenerator())
             .build();
 
-    @Test
-    void bugOne() {
-        CustomJooqRecord customJooqRecord = fixtureMonkey.giveMeOne(CustomJooqRecord.class);
+    @RepeatedTest(100)
+    void bug() {
+        List<Node> nodes = fixtureMonkey.giveMe(Node.class, 25);
 
-        assertThat(customJooqRecord).isNotNull();
-    }
+        List<String> names = nodes.stream()
+                .map(node -> node.name)
+                .toList();
 
-    @Test
-    void bugTwo() {
-        BasicCondition basicCondition = fixtureMonkey.giveMeOne(BasicCondition.class);
+        Map<String, Long> duplicateCount = names.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.groupingBy(s -> s, Collectors.counting()));
 
-        assertThat(basicCondition).isNotNull();
-    }
+        List<String> duplicateStrings = duplicateCount.entrySet().stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
 
-    @Test
-    void bugThree() {
-        FilePart filePart = fixtureMonkey.giveMeOne(FilePart.class);
+        System.out.println("Duplicate strings: " + duplicateStrings);
 
-        assertThat(filePart).isNotNull();
+
+        assertThat(duplicateStrings).isEmpty();
     }
 }
