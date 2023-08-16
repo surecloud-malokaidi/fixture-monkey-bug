@@ -7,6 +7,7 @@ import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntr
 import com.navercorp.fixturemonkey.api.introspector.JavaTypeArbitraryGenerator;
 import net.jqwik.api.arbitraries.StringArbitrary;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,5 +62,16 @@ class FixtureMonkeyTest {
 
 
         assertThat(duplicateStrings).isEmpty();
+    }
+
+    @Test
+    void anotherBug() {
+        View view = fixtureMonkey.giveMeBuilder(new View())
+                .set("version", new AggregateVersion(1))
+                .set("deleted", true)
+                .sample();
+
+        assertThat(view.isDeleted()).isTrue();
+        assertThat(view.getVersion().getValue()).isNotEqualTo(0);
     }
 }
