@@ -8,6 +8,7 @@ import com.navercorp.fixturemonkey.api.introspector.JavaTypeArbitraryGenerator;
 import net.jqwik.api.arbitraries.StringArbitrary;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.codec.multipart.FilePart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,5 +74,12 @@ class FixtureMonkeyTest {
 
         assertThat(view.isDeleted()).isTrue();
         assertThat(view.getVersion().getValue()).isNotEqualTo(0);
+    }
+
+    @Test
+    void filePart() {
+        FilePart filePart = fixtureMonkey.giveMeOne(FilePart.class);
+
+        assertThat(filePart).isNotNull();
     }
 }
