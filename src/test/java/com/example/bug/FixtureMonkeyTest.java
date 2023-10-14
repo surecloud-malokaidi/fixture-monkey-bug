@@ -94,4 +94,19 @@ class FixtureMonkeyTest {
         assertThat(dataTest.getId()).isNotNull();
         assertThat(dataTest.getName()).isNotNull();
     }
+
+    @Test
+    void nodeBug() {
+        Node node = fixtureMonkey.giveMeOne(Node.class);
+
+        assertThat(node.nodes).isNotEmpty();
+
+        Node parentNode = fixtureMonkey.giveMeBuilder(Node.class)
+                .set("nodes", List.of(node))
+                .sample();
+
+        assertThat(parentNode).isNotNull();
+        assertThat(parentNode.nodes).isNotEmpty();
+        assertThat(parentNode.nodes.get(0).nodes).isNotEmpty();
+    }
 }
