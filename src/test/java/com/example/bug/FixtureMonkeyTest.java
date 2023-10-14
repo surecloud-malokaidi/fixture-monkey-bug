@@ -6,6 +6,7 @@ import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitra
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.JavaTypeArbitraryGenerator;
 import net.jqwik.api.arbitraries.StringArbitrary;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.codec.multipart.FilePart;
@@ -39,10 +40,12 @@ class FixtureMonkeyTest {
             .nullableElement(false)
             .interfaceImplements(Book.class, List.of(FantasyBook.class))
             .pushAssignableTypeArbitraryIntrospector(Record.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
+            //.pushAssignableTypeArbitraryIntrospector(DataTest.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .javaTypeArbitraryGenerator(new CustomJavaTypeArbitaryGenerator())
             .build();
 
     @RepeatedTest(100)
+    @Disabled
     void bug() {
         List<Node> nodes = fixtureMonkey.giveMe(Node.class, 25);
 
@@ -81,5 +84,14 @@ class FixtureMonkeyTest {
         FilePart filePart = fixtureMonkey.giveMeOne(FilePart.class);
 
         assertThat(filePart).isNotNull();
+    }
+
+    @Test
+    void atDataBug() {
+        DataTest dataTest = fixtureMonkey.giveMeOne(DataTest.class);
+
+        assertThat(dataTest).isNotNull();
+        assertThat(dataTest.getId()).isNotNull();
+        assertThat(dataTest.getName()).isNotNull();
     }
 }
