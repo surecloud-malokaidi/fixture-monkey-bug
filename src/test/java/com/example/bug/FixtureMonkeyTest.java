@@ -11,6 +11,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.codec.multipart.FilePart;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ class FixtureMonkeyTest {
             .nullableElement(false)
             .interfaceImplements(Book.class, List.of(FantasyBook.class))
             .pushAssignableTypeArbitraryIntrospector(Record.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
-            //.pushAssignableTypeArbitraryIntrospector(DataTest.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
+            .pushAssignableTypeArbitraryIntrospector(Timestamp.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .javaTypeArbitraryGenerator(new CustomJavaTypeArbitaryGenerator())
             .build();
 
@@ -108,5 +109,12 @@ class FixtureMonkeyTest {
         assertThat(parentNode).isNotNull();
         assertThat(parentNode.nodes).isNotEmpty();
         assertThat(parentNode.nodes.get(0).nodes).isNotEmpty();
+    }
+
+    @Test
+    void timestamp() {
+        Timestamp timestamp = fixtureMonkey.giveMeOne(Timestamp.class);
+
+        assertThat(timestamp).isNotNull();
     }
 }
