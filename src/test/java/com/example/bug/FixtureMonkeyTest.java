@@ -4,7 +4,7 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
 import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
-import com.navercorp.fixturemonkey.api.introspector.JavaTypeArbitraryGenerator;
+import com.navercorp.fixturemonkey.api.jqwik.JavaTypeArbitraryGenerator;
 import net.jqwik.api.arbitraries.StringArbitrary;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
@@ -42,7 +42,7 @@ class FixtureMonkeyTest {
             .interfaceImplements(Book.class, List.of(FantasyBook.class))
             .pushAssignableTypeArbitraryIntrospector(Record.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .pushAssignableTypeArbitraryIntrospector(Timestamp.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
-            .javaTypeArbitraryGenerator(new CustomJavaTypeArbitaryGenerator())
+            //.javaTypeArbitraryGenerator(new CustomJavaTypeArbitaryGenerator())
             .build();
 
     @RepeatedTest(100)
@@ -116,5 +116,12 @@ class FixtureMonkeyTest {
         Timestamp timestamp = fixtureMonkey.giveMeOne(Timestamp.class);
 
         assertThat(timestamp).isNotNull();
+    }
+
+    @Test
+    void recordBug() {
+        WorkflowRecord workflowRecord = fixtureMonkey.giveMeOne(WorkflowRecord.class);
+
+        assertThat(workflowRecord).isNotNull();
     }
 }
