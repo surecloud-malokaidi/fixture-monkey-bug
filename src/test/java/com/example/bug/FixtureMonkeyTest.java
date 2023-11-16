@@ -2,6 +2,7 @@ package com.example.bug;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
+import com.navercorp.fixturemonkey.api.introspector.CompositeArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.jqwik.JavaTypeArbitraryGenerator;
@@ -34,7 +35,10 @@ class FixtureMonkeyTest {
     }
 
     FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
-            .objectIntrospector(FieldReflectionArbitraryIntrospector.INSTANCE)
+            .objectIntrospector(new CompositeArbitraryIntrospector(
+                    List.of(
+                            ConstructorPropertiesArbitraryIntrospector.INSTANCE,
+                            FieldReflectionArbitraryIntrospector.INSTANCE)))
             .defaultArbitraryContainerInfoGenerator(context -> new ArbitraryContainerInfo(1, 1))
             .nullableContainer(false)
             .defaultNotNull(true)
