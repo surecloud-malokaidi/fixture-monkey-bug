@@ -4,6 +4,7 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
 import com.navercorp.fixturemonkey.api.introspector.CompositeArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
+import com.navercorp.fixturemonkey.api.introspector.FailoverIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.jqwik.JavaTypeArbitraryGenerator;
 import net.jqwik.api.arbitraries.StringArbitrary;
@@ -35,7 +36,7 @@ class FixtureMonkeyTest {
     }
 
     FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
-            .objectIntrospector(new CompositeArbitraryIntrospector(
+            .objectIntrospector(new FailoverIntrospector(
                     List.of(
                             ConstructorPropertiesArbitraryIntrospector.INSTANCE,
                             FieldReflectionArbitraryIntrospector.INSTANCE)))
