@@ -2,12 +2,8 @@ package com.example.bug;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
-import com.navercorp.fixturemonkey.api.introspector.CompositeArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
-import com.navercorp.fixturemonkey.api.introspector.FailoverIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
-import com.navercorp.fixturemonkey.api.jqwik.JavaTypeArbitraryGenerator;
-import net.jqwik.api.arbitraries.StringArbitrary;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -111,7 +107,7 @@ class FixtureMonkeyTest {
 
     @Test
     void recordBug() {
-        WorkflowRecord workflowRecord = fixtureMonkey.giveMeOne(WorkflowRecord.class);
+        WorkflowRecord workflowRecord = FIXTURE_MONKEY.giveMeOne(WorkflowRecord.class);
 
         assertThat(workflowRecord).isNotNull();
     }
