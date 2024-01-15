@@ -4,15 +4,13 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.generator.ArbitraryContainerInfo;
 import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
-import com.navercorp.fixturemonkey.api.introspector.JavaTypeArbitraryGenerator;
-import net.jqwik.api.arbitraries.StringArbitrary;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.codec.multipart.FilePart;
 
+import java.net.URL;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,18 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FixtureMonkeyTest {
 
-    static class CustomJavaTypeArbitaryGenerator implements JavaTypeArbitraryGenerator {
-        @Override
-        public StringArbitrary strings() {
-            return JavaTypeArbitraryGenerator.super.strings()
-                    .alpha()
-                    .ofMinLength(5)
-                    .ofMaxLength(25)
-                    .repeatChars(0);
-        }
-    }
-
-    FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
+    private final static FixtureMonkey FIXTURE_MONKEY = FixtureMonkey.builder()
             .objectIntrospector(FieldReflectionArbitraryIntrospector.INSTANCE)
             .defaultArbitraryContainerInfoGenerator(context -> new ArbitraryContainerInfo(1, 1))
             .nullableContainer(false)
@@ -42,13 +29,13 @@ class FixtureMonkeyTest {
             .interfaceImplements(Book.class, List.of(FantasyBook.class))
             .pushAssignableTypeArbitraryIntrospector(Record.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .pushAssignableTypeArbitraryIntrospector(Timestamp.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
-            .javaTypeArbitraryGenerator(new CustomJavaTypeArbitaryGenerator())
+            .pushAssignableTypeArbitraryIntrospector(URL.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .build();
 
     @RepeatedTest(100)
     @Disabled
     void bug() {
-        List<Node> nodes = fixtureMonkey.giveMe(Node.class, 25);
+        List<Node> nodes = FIXTURE_MONKEY.giveMe(Node.class, 25);
 
         List<String> names = nodes.stream()
                 .map(node -> node.name)
@@ -71,7 +58,7 @@ class FixtureMonkeyTest {
 
     @Test
     void anotherBug() {
-        View view = fixtureMonkey.giveMeBuilder(new View())
+        View view = FIXTURE_MONKEY.giveMeBuilder(new View())
                 .set("version", new AggregateVersion(1))
                 .set("deleted", true)
                 .sample();
@@ -82,14 +69,14 @@ class FixtureMonkeyTest {
 
     @Test
     void filePart() {
-        FilePart filePart = fixtureMonkey.giveMeOne(FilePart.class);
+        FilePart filePart = FIXTURE_MONKEY.giveMeOne(FilePart.class);
 
         assertThat(filePart).isNotNull();
     }
 
     @Test
     void atDataBug() {
-        DataTest dataTest = fixtureMonkey.giveMeOne(DataTest.class);
+        DataTest dataTest = FIXTURE_MONKEY.giveMeOne(DataTest.class);
 
         assertThat(dataTest).isNotNull();
         assertThat(dataTest.getId()).isNotNull();
@@ -98,11 +85,11 @@ class FixtureMonkeyTest {
 
     @Test
     void nodeBug() {
-        Node node = fixtureMonkey.giveMeOne(Node.class);
+        Node node = FIXTURE_MONKEY.giveMeOne(Node.class);
 
         assertThat(node.nodes).isNotEmpty();
 
-        Node parentNode = fixtureMonkey.giveMeBuilder(Node.class)
+        Node parentNode = FIXTURE_MONKEY.giveMeBuilder(Node.class)
                 .set("nodes", List.of(node))
                 .sample();
 
@@ -113,8 +100,24 @@ class FixtureMonkeyTest {
 
     @Test
     void timestamp() {
-        Timestamp timestamp = fixtureMonkey.giveMeOne(Timestamp.class);
+        Timestamp timestamp = FIXTURE_MONKEY.giveMeOne(Timestamp.class);
 
         assertThat(timestamp).isNotNull();
+    }
+
+    @Test
+    void locale() {
+        URL locale = FIXTURE_MONKEY.giveMeOne(URL.class);
+
+        assertThat(locale).isNotNull();
+    }
+
+    @Test
+    void objectTest() {
+        ObjectTest sample = FIXTURE_MONKEY.giveMeBuilder(ObjectTest.class)
+                .set("object", "test")
+                .sample();
+
+        assertThat(sample.getObject()).isEqualTo("test");
     }
 }
