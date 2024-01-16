@@ -11,6 +11,7 @@ import org.springframework.http.codec.multipart.FilePart;
 
 import java.net.URL;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +29,8 @@ class FixtureMonkeyTest {
             .defaultNotNull(true)
             .nullableElement(false)
             .interfaceImplements(Book.class, List.of(FantasyBook.class))
-            .interfaceImplements(Condition.class, List.of(ValueCondition.class))
+            .interfaceImplements(EntityAttribute.class, List.of(NumberEntityAttribute.class))
+            .interfaceImplements(Condition.class, List.of(ValueCondition.class, ListValueCondition.class))
             .pushAssignableTypeArbitraryIntrospector(Record.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .pushAssignableTypeArbitraryIntrospector(Timestamp.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .pushAssignableTypeArbitraryIntrospector(URL.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
@@ -130,17 +132,20 @@ class FixtureMonkeyTest {
         assertThat(sample.getObject()).isEqualTo("test");
     }
 
-    @RepeatedTest(100)
+    @Test
     void setBug() {
-        ValueCondition condition = FIXTURE_MONKEY.giveMeOne(ValueCondition.class);
-        UUID id = FIXTURE_MONKEY.giveMeOne(UUID.class);
+        NumberEntityAttribute entityAttribute1 = FIXTURE_MONKEY.giveMeOne(NumberEntityAttribute.class);
+        List<UUID> before = new ArrayList<>(entityAttribute1.getPermissions()
+                .stream()
+                .map(EntityAttributePermission::getEntityAttributePermissionId)
+                .toList());
 
-        Trigger trigger = FIXTURE_MONKEY.giveMeBuilder(Trigger.class)
-                .set("id", id)
-                .set("conditions", List.of(condition))
-                .sample();
+        FIXTURE_MONKEY.giveMeOne(NumberEntityAttribute.class);
+        List<UUID> after = new ArrayList<>(entityAttribute1.getPermissions()
+                .stream()
+                .map(EntityAttributePermission::getEntityAttributePermissionId)
+                .toList());
 
-        assertThat(trigger.getId()).isEqualTo(id);
-        assertThat(trigger.getConditions().get(0)).isEqualTo(condition);
+        assertThat(before).isEqualTo(after);
     }
 }
