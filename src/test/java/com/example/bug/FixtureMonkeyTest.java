@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -126,5 +127,19 @@ class FixtureMonkeyTest {
                 .sample();
 
         assertThat(sample.getObject()).isEqualTo("test");
+    }
+
+    @Test
+    void setBug() {
+        Condition condition = FIXTURE_MONKEY.giveMeOne(ValueCondition.class);
+        UUID id = FIXTURE_MONKEY.giveMeOne(UUID.class);
+
+        Trigger trigger = FIXTURE_MONKEY.giveMeBuilder(Trigger.class)
+                .set("id", id)
+                .set("conditions", List.of(condition))
+                .sample();
+
+        assertThat(trigger.getId()).isEqualTo(id);
+        assertThat(trigger.getConditions().get(0)).isEqualTo(condition);
     }
 }
