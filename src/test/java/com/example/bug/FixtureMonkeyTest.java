@@ -28,6 +28,7 @@ class FixtureMonkeyTest {
             .defaultNotNull(true)
             .nullableElement(false)
             .interfaceImplements(Book.class, List.of(FantasyBook.class))
+            .interfaceImplements(Condition.class, List.of(ValueCondition.class))
             .pushAssignableTypeArbitraryIntrospector(Record.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .pushAssignableTypeArbitraryIntrospector(Timestamp.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .pushAssignableTypeArbitraryIntrospector(URL.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
@@ -129,9 +130,9 @@ class FixtureMonkeyTest {
         assertThat(sample.getObject()).isEqualTo("test");
     }
 
-    @Test
+    @RepeatedTest(100)
     void setBug() {
-        Condition condition = FIXTURE_MONKEY.giveMeOne(ValueCondition.class);
+        ValueCondition condition = FIXTURE_MONKEY.giveMeOne(ValueCondition.class);
         UUID id = FIXTURE_MONKEY.giveMeOne(UUID.class);
 
         Trigger trigger = FIXTURE_MONKEY.giveMeBuilder(Trigger.class)
