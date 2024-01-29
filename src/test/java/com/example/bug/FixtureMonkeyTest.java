@@ -148,4 +148,21 @@ class FixtureMonkeyTest {
 
         assertThat(before).isEqualTo(after);
     }
+
+    @Test
+    void constructor() {
+         FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
+                .objectIntrospector(FieldReflectionArbitraryIntrospector.INSTANCE)
+                .defaultArbitraryContainerInfoGenerator(context -> new ArbitraryContainerInfo(1, 1))
+                .nullableContainer(false)
+                .defaultNotNull(true)
+                .nullableElement(false)
+                .interfaceImplements(Value.class, List.of(StringValue.class))
+                .pushAssignableTypeArbitraryIntrospector(Value.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
+                .build();
+
+        Value value = fixtureMonkey.giveMeOne(Value.class);
+
+        assertThat(value).isNotNull();
+    }
 }
