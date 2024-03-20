@@ -31,6 +31,7 @@ class FixtureMonkeyTest {
             .interfaceImplements(Book.class, List.of(FantasyBook.class))
             .interfaceImplements(EntityAttribute.class, List.of(NumberEntityAttribute.class))
             .interfaceImplements(Condition.class, List.of(ValueCondition.class, ListValueCondition.class))
+            .interfaceImplements(Letter.class, List.of(A.class, B.class))
             .pushAssignableTypeArbitraryIntrospector(Record.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .pushAssignableTypeArbitraryIntrospector(Timestamp.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
             .pushAssignableTypeArbitraryIntrospector(URL.class, ConstructorPropertiesArbitraryIntrospector.INSTANCE)
@@ -151,7 +152,7 @@ class FixtureMonkeyTest {
 
     @Test
     void constructor() {
-         FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
+        FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
                 .objectIntrospector(FieldReflectionArbitraryIntrospector.INSTANCE)
                 .defaultArbitraryContainerInfoGenerator(context -> new ArbitraryContainerInfo(1, 1))
                 .nullableContainer(false)
@@ -164,5 +165,16 @@ class FixtureMonkeyTest {
         Value value = fixtureMonkey.giveMeOne(Value.class);
 
         assertThat(value).isNotNull();
+    }
+
+    @RepeatedTest(100)
+    void letterTest() {
+        B b = FIXTURE_MONKEY.giveMeOne(B.class);
+
+        Alphabet alphabet1 = FIXTURE_MONKEY.giveMeBuilder(Alphabet.class)
+                .set("letters", List.of(b))
+                .sample();
+
+        assertThat(alphabet1.getLetters()).singleElement().isExactlyInstanceOf(B.class);
     }
 }
